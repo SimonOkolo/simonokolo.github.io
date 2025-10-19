@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* Optional: add blinking cursor effect */
+.cursor-blink {
+  animation: blink 1s step-start infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
