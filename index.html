@@ -1,13 +1,837 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-portfolio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simon Okolo - Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --accent: #58a6ff;
+    }
+
+    body.light-mode {
+      --bg: #ffffff;
+      --surface: #f6f8fa;
+      --border: #d0d7de;
+      --text: #1f2328;
+      --text-dim: #656d76;
+      --accent: #0969da;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Header */
+    header {
+      padding: 3rem 0 4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-content {
+      flex: 1;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .header-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 1.25rem;
+      transition: all 0.2s ease;
+    }
+
+    .header-link:hover {
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .theme-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      font-size: 1.25rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 0;
+      margin: 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      background: rgba(88, 166, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+      padding: 2rem 0;
+      min-height: 400px;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* About */
+    .about-text {
+      max-width: 700px;
+    }
+
+    .about-text p {
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+      color: var(--text-dim);
+    }
+
+    /* Project tabs */
+    .project-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .project-tab {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .project-tab:hover {
+      color: var(--text);
+      background: rgba(88, 166, 255, 0.05);
+    }
+
+    .project-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Projects */
+    .project {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .project:last-child {
+      border-bottom: none;
+    }
+
+    .project:hover {
+      padding-left: 1rem;
+    }
+
+    .project h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .project p {
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .tags {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      padding: 0.25rem 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .project-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    .project-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .project-link:hover {
+      opacity: 0.7;
+    }
+
+    .project-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 16/9;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .gallery-item:hover {
+      border-color: var(--accent);
+      transform: scale(1.02);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item.youtube::after {
+      content: '▶';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+
+    .modal-content {
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .modal-content iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -2.5rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      opacity: 0.7;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--text-dim);
+    }
+
+    /* Skills */
+    .skills-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .skill {
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .skill:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Contact */
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 400px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .contact-item:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      font-size: 1.25rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Cursor effect */
+    .cursor-dot {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .cursor-dot {
+        display: block;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+      }
+
+      nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-btn {
+        white-space: nowrap;
+      }
+
+      .project-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .project-tab {
+        white-space: nowrap;
+      }
+
+      .skills-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <h1>Simon Okolo</h1>
+        <p class="subtitle">I just like technology</p>
+        <div class="header-links">
+          <a href="mailto:simon.okolo@proton.me" class="header-link" title="Email">Email</a>
+          <a href="https://github.com/simonokolo" target="_blank" class="header-link" title="GitHub">GitHub</a>
+          <a href="https://linkedin.com/in/simon-okolo" target="_blank" class="header-link" title="LinkedIn">LinkedIn</a>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle">
+        <span id="themeIcon">☀</span>
+      </button>
+    </header>
+
+    <nav>
+      <button class="nav-btn active" data-section="about">About</button>
+      <button class="nav-btn" data-section="projects">Projects</button>
+      <button class="nav-btn" data-section="skills">Skills</button>
+    </nav>
+
+    <!-- About Section -->
+    <section id="about" class="section active">
+      <div class="about-text">
+        <p>
+          Hi, I’m Simon, an aspiring cybersecurity and computer science professional based in London. I’ve spent the past few years exploring programming, web development, and system security, building projects that range from interactive websites to hardware devices like a custom MP3 player.
+        </p>
+        <p>
+          I’m particularly passionate about learning how systems can fail and how to secure them whether through coding, experimenting with AI, or hosting my own servers.
+        </p>
+        <p>
+          I enjoy tackling technical challenges, learning new technologies independently, and applying what I’ve learned to practical projects. My goal is to continue developing my skills through hands on experience and contribute to creating secure, reliable, and innovative systems in the future.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+      <div class="project-tabs">
+        <button class="project-tab active" data-category="github">GitHub</button>
+        <button class="project-tab" data-category="gamedev">GameDev</button>
+        <button class="project-tab" data-category="other">Other</button>
+      </div>
+      <div id="projectsContainer">
+        <div class="loading">Loading projects...</div>
+      </div>
+    </section>
+
+    <!-- Modal for images/videos -->
+    <div class="modal" id="mediaModal">
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose">×</button>
+        <div id="modalMedia"></div>
+      </div>
+    </div>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+      <div class="skills-list">
+        <div class="skill">HTML5</div>
+        <div class="skill">CSS3</div>
+        <div class="skill">JavaScript</div>
+        <div class="skill">Node.js</div>
+        <div class="skill">Express</div>
+        <div class="skill">MongoDB</div>
+        <div class="skill">PostgreSQL</div>
+        <div class="skill">Git</div>
+        <div class="skill">Firebase</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Custom projects organized by category
+    const gameDevProjects = [
+      {
+        name: "Hiroikku",
+        description: "A single player unreal engine project.",
+        topics: ["Unreal Engine", "Blueprints", "Game Development"],
+        html_url: "",
+        homepage: "",
+        category: "gamedev",
+        media: [
+          { type: "youtube", id: "yW_tYNjFUrY" },
+          { type: "youtube", id: "knqlcddYRyo" },
+          { type: "youtube", id: "-Y1Yz9CvglY" },
+          { type: "youtube", id: "8Oa-vCnBfG4" },
+          { type: "youtube", id: "CcCoH8uSGes" },
+        ]
+      },
+      {
+        name: "Project Abyss",
+        description: "A single player unreal engine project that focussed on the bodycam perspective.",
+        topics: ["Unreal Engine", "Blueprints", "Game Development"],
+        html_url: "",
+        homepage: "",
+        category: "gamedev",
+        media: [
+          { type: "youtube", id: "ZM5HqIyK084" }
+        ]
+      }
+    ];
+
+    const otherProjects = [
+      // Add your other custom projects here
+      // {
+      //   name: "Example Project",
+      //   description: "Description here",
+      //   topics: ["Tag1", "Tag2"],
+      //   html_url: "",
+      //   homepage: "",
+      //   category: "other",
+      //   media: []
+      // }
+    ];
+
+    let allProjectsData = {
+      github: [],
+      gamedev: gameDevProjects,
+      other: otherProjects
+    };
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    if (currentTheme === 'light') {
+      body.classList.add('light-mode');
+      themeIcon.textContent = '☾';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+      
+      if (body.classList.contains('light-mode')) {
+        themeIcon.textContent = '☾';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeIcon.textContent = '☀';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // Project tabs
+    const projectTabs = document.querySelectorAll('.project-tab');
+    let currentCategory = 'github';
+
+    projectTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const category = tab.dataset.category;
+        currentCategory = category;
+        
+        projectTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        displayProjects(allProjectsData[category]);
+      });
+    });
+
+    // Fetch GitHub projects
+    async function fetchGitHubProjects() {
+      try {
+        const username = 'simonokolo';
+        const token = '';
+        
+        const headers = token ? { 'Authorization': `token ${token}` } : {};
+        
+        const response = await fetch(
+          `https://api.github.com/users/${username}/repos?sort=updated&per_page=20`,
+          { headers }
+        );
+        const repos = await response.json();
+        
+        const githubProjects = repos
+          .filter(repo => !repo.fork)
+          .map(repo => ({
+            name: repo.name,
+            description: repo.description || "No description available",
+            topics: repo.topics || [],
+            html_url: repo.html_url,
+            homepage: repo.homepage,
+            stars: repo.stargazers_count,
+            language: repo.language,
+            category: 'github'
+          }));
+
+        allProjectsData.github = githubProjects;
+        displayProjects(githubProjects);
+      } catch (error) {
+        console.error('Error fetching GitHub projects:', error);
+        allProjectsData.github = [];
+        displayProjects([]);
+      }
+    }
+
+    // Display projects
+    function displayProjects(projects) {
+      const container = document.getElementById('projectsContainer');
+      container.innerHTML = '';
+
+      if (projects.length === 0) {
+        container.innerHTML = '<div class="loading">No projects in this category yet.</div>';
+        return;
+      }
+
+      projects.forEach(project => {
+        const projectDiv = document.createElement('div');
+        projectDiv.className = 'project';
+
+        let metaHTML = '<div class="project-meta">';
+        if (project.language) {
+          metaHTML += `<span>○ ${project.language}</span>`;
+        }
+        if (project.stars !== undefined) {
+          metaHTML += `<span>★ ${project.stars}</span>`;
+        }
+        metaHTML += '</div>';
+
+        let linksHTML = '';
+        if (project.html_url) {
+          linksHTML += `<a href="${project.html_url}" target="_blank" class="project-link">View Code →</a>`;
+        }
+        if (project.homepage) {
+          linksHTML += ` <a href="${project.homepage}" target="_blank" class="project-link">Live Demo →</a>`;
+        }
+
+        let tagsHTML = '';
+        if (project.topics && project.topics.length > 0) {
+          tagsHTML = '<div class="tags">';
+          project.topics.forEach(topic => {
+            tagsHTML += `<span class="tag">${topic}</span>`;
+          });
+          tagsHTML += '</div>';
+        }
+
+        let galleryHTML = '';
+        if (project.media && project.media.length > 0) {
+          galleryHTML = '<div class="project-gallery">';
+          project.media.forEach((item, index) => {
+            if (item.type === 'image') {
+              galleryHTML += `
+                <div class="gallery-item" onclick="openModal('image', '${item.url}')">
+                  <img src="${item.url}" alt="Project screenshot">
+                </div>
+              `;
+            } else if (item.type === 'youtube') {
+              const thumbnail = `https://img.youtube.com/vi/${item.id}/maxresdefault.jpg`;
+              galleryHTML += `
+                <div class="gallery-item youtube" onclick="openModal('youtube', '${item.id}')">
+                  <img src="${thumbnail}" alt="Video thumbnail">
+                </div>
+              `;
+            }
+          });
+          galleryHTML += '</div>';
+        }
+
+        projectDiv.innerHTML = `
+          <h3>${project.name}</h3>
+          ${metaHTML}
+          <p>${project.description}</p>
+          ${linksHTML ? `<div style="margin: 1rem 0;">${linksHTML}</div>` : ''}
+          ${tagsHTML}
+          ${galleryHTML}
+        `;
+
+        container.appendChild(projectDiv);
+      });
+    }
+
+    // Modal functionality
+    const modal = document.getElementById('mediaModal');
+    const modalMedia = document.getElementById('modalMedia');
+    const modalClose = document.getElementById('modalClose');
+
+    window.openModal = function(type, content) {
+      if (type === 'image') {
+        modalMedia.innerHTML = `<img src="${content}" alt="Project image">`;
+      } else if (type === 'youtube') {
+        modalMedia.innerHTML = `<iframe src="https://www.youtube.com/embed/${content}" allowfullscreen></iframe>`;
+      }
+      modal.classList.add('active');
+    };
+
+    modalClose.addEventListener('click', () => {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modalMedia.innerHTML = '';
+      }, 300);
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          modalMedia.innerHTML = '';
+        }, 300);
+      }
+    });
+
+    // Load projects on page load
+    fetchGitHubProjects();
+
+    // Navigation
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.section');
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetSection = btn.dataset.section;
+        
+        navBtns.forEach(b => b.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(targetSection).classList.add('active');
+      });
+    });
+
+    // Custom cursor
+    const cursorDot = document.getElementById('cursorDot');
+    let mouseX = 0, mouseY = 0;
+    let dotX = 0, dotY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+      dotX += (mouseX - dotX) * 0.2;
+      dotY += (mouseY - dotY) * 0.2;
+      
+      cursorDot.style.left = dotX + 'px';
+      cursorDot.style.top = dotY + 'px';
+      
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    // Hover effects for interactive elements
+    document.addEventListener('DOMContentLoaded', () => {
+      const interactiveElements = document.querySelectorAll('button, a, .skill, .project');
+      
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          cursorDot.style.transform = 'scale(3)';
+          cursorDot.style.opacity = '0.3';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+          cursorDot.style.transform = 'scale(1)';
+          cursorDot.style.opacity = '1';
+        });
+      });
+    });
+  </script>
+</body>
 </html>
